@@ -2,9 +2,6 @@ from flask import Flask, jsonify, Response, make_response, request
 import requests
 import uuid
 import base64
-from bs4 import BeautifulSoup
-import re
-import html
 
 app = Flask(__name__)
 
@@ -12,7 +9,7 @@ captcha = "https://services.gst.gov.in/services/captcha"
 
 sessions = {}
 
-@app.route("/getCaptcha", methods=["GET"])
+@app.route("/api/v1/getCaptcha", methods=["GET"])
 def getCaptcha():
     try:
         session = requests.Session()
@@ -25,14 +22,14 @@ def getCaptcha():
         captchaResponse = session.get(captcha)
         captchaBase64 = base64.b64encode(captchaResponse.content).decode("utf-8")
 
-        # # For Testing Purpose only
+        # For Testing Purpose only
 
-        # imageString = f'<img src="data:image/png;base64,{captchaBase64}" alt="captcha">'
-        # with open('captcha.html','w') as f:
-        #     f.write(imageString)   
-        #     f.close()
+        imageString = f'<img src="data:image/png;base64,{captchaBase64}" alt="captcha">'
+        with open('captcha.html','w') as f:
+            f.write(imageString)   
+            f.close()
 
-        # #
+        #
 
         sessions[id] = {
             "session": session
@@ -50,7 +47,7 @@ def getCaptcha():
         return jsonify({"error": "Error in fetching captcha"})
     
 
-@app.route("/getGSTDetails", methods=["POST"])
+@app.route("/api/v1/getGSTDetails", methods=["POST"])
 def getGSTDetails():
     try:
         sessionId = request.json.get("sessionId")

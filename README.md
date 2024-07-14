@@ -37,7 +37,7 @@ This API fetches GST Taxpayer Details with GSTIN and provide data in JSON format
 
 4. Run the Application:
    ```bash
-   python gst.py
+   python app.py
  *The API will be available at http://127.0.0.1:5000.*
  
 ## Usage
