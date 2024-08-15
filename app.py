@@ -3,15 +3,17 @@ import requests
 import uuid
 import base64
 
+from asgiref.wsgi import WsgiToAsgi
+
 app = Flask(__name__)
+asgi_app = WsgiToAsgi(app)
 
-captcha = "https://services.gst.gov.in/services/captcha"
-
-sessions = {}
+gstSessions = {}
 
 @app.route("/api/v1/getCaptcha", methods=["GET"])
 def getCaptcha():
     try:
+        captcha = "https://services.gst.gov.in/services/captcha"
         session = requests.Session()
         id = str(uuid.uuid4())
 
@@ -24,14 +26,14 @@ def getCaptcha():
 
         # For Testing Purpose only
 
-        imageString = f'<img src="data:image/png;base64,{captchaBase64}" alt="captcha">'
-        with open('captcha.html','w') as f:
-            f.write(imageString)   
-            f.close()
+        # imageString = f'<img src="data:image/png;base64,{captchaBase64}" alt="captcha">'
+        # with open('captcha.html','w') as f:
+        #     f.write(imageString)   
+        #     f.close()
 
         #
 
-        sessions[id] = {
+        gstSessions[id] = {
             "session": session
         }
 
@@ -54,7 +56,7 @@ def getGSTDetails():
         GSTIN = request.json.get("GSTIN")
         captcha = request.json.get("captcha")
 
-        user = sessions.get(sessionId)
+        user = gstSessions.get(sessionId)
 
         session = user['session']
         if session is None:
@@ -78,4 +80,5 @@ def getGSTDetails():
 
 
 if __name__ == "__main__":
-    app.run()
+    import uvicorn
+    uvicorn.run(asgi_app, host='0.0.0.0', port=5001)

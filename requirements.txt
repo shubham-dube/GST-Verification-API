@@ -1,0 +1,6 @@
+flask
+requests
+bs4
+uuid
+uvicorn
+asgiref
